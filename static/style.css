@@ -1,0 +1,637 @@
+:root {
+  --bg: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --accent: #4f6ef7;
+  --accent-hover: #3b55d6;
+  --border: #e2e8f0;
+  --danger: #ef4444;
+  --radius: 24px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', 'Hiragino Sans GB', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 24px 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 每日一图背景 */
+body.has-background {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #fff;
+}
+
+body.has-background::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 0;
+}
+
+body.has-background .header h1 {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+body.has-background .subtitle {
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.has-background .breadcrumb a,
+body.has-background .breadcrumb .sep { color: rgba(255, 255, 255, 0.75); }
+
+body.has-background .breadcrumb .cur { color: #fff; }
+
+body.has-background .dial-icon {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+body.has-background .dial-item.folder .dial-icon {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.3);
+}
+
+body.has-background .dial-name {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+body.has-background .footer,
+body.has-background .footer a { color: rgba(255, 255, 255, 0.75); }
+body.has-background .footer a:hover { color: rgba(255, 255, 255, 0.95); }
+
+/* 顶部工具栏 */
+.toolbar {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 40;
+}
+
+/* 头部 */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.6rem;
+  margin: 0 0 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(30, 41, 59, 0.75);
+  margin: 0;
+}
+
+.subtitle:empty { display: none; }
+
+/* 面包屑 */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  min-height: 22px;
+}
+
+.breadcrumb a {
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.breadcrumb a:hover { color: var(--accent); background: rgba(79, 110, 247, 0.08); }
+
+.breadcrumb .sep { color: #cbd5e1; }
+
+.breadcrumb .cur {
+  color: var(--text);
+  font-weight: 600;
+  padding: 2px 6px;
+}
+
+/* 网格 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 6), minmax(0, 1fr));
+  column-gap: 40px;
+  row-gap: 44px;
+  padding: 0 24px;
+  width: 100%;
+  justify-content: center;
+}
+
+.grid-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 48px 0;
+}
+
+/* 拨号项 */
+.dial-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+  transition: opacity 0.2s ease;
+  justify-self: center;
+  width: 120px;
+}
+
+.dial-item:active { opacity: 0.85; }
+
+.dial-item.dragging { opacity: 0.4; }
+
+.dial-item.drag-over .dial-icon {
+  outline: 2px dashed var(--accent);
+  outline-offset: 4px;
+}
+
+/* 编辑/删除按钮（登录后 hover 显示） */
+.dial-item .tools {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: none;
+  gap: 6px;
+  z-index: 2;
+}
+
+.dial-item:hover .tools { display: flex; }
+
+.dial-item .tools button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(30, 41, 59, 0.7);
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.dial-item .tools button:hover { background: var(--danger); }
+
+.dial-item .tools button.edit:hover { background: var(--accent); }
+
+.dial-icon {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dial-item:hover .dial-icon {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.dial-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 目录图标 */
+.dial-item.folder .dial-icon {
+  font-size: 3rem;
+  background: rgba(250, 204, 21, 0.12);
+  border-color: rgba(250, 204, 21, 0.25);
+}
+
+.dial-name {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: rgba(30, 41, 59, 0.85);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 页脚备案 */
+.footer {
+  margin-top: auto;
+  padding: 40px 0 32px;
+  text-align: center;
+  color: rgba(30, 41, 59, 0.7);
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+
+.footer a {
+  color: rgba(30, 41, 59, 0.7);
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.footer a:hover { color: rgba(30, 41, 59, 0.95); }
+
+.footer .filing-img {
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  margin-right: 4px;
+}
+
+/* 按钮 */
+.btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.btn:hover { background: #f1f5f9; }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text);
+  backdrop-filter: blur(8px);
+}
+
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.9); }
+
+.btn-danger { color: var(--danger); border-color: #fecaca; }
+.btn-danger:hover { background: #fef2f2; }
+
+/* 新建下拉菜单 */
+.dropdown { position: relative; }
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  min-width: 140px;
+  z-index: 60;
+  padding: 6px;
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.dropdown-menu button:hover { background: #f1f5f9; }
+
+/* 弹窗 */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-sm { max-width: 340px; }
+.modal-lg { max-width: 640px; }
+
+.modal h2 { margin: 0 0 16px; font-size: 18px; }
+
+.modal label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 12px 0 6px;
+}
+
+.modal input[type="text"],
+.modal input[type="password"],
+.modal input[type="number"],
+.modal select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.modal input[type="text"]:focus,
+.modal input[type="password"]:focus,
+.modal input[type="number"]:focus,
+.modal select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+  margin: 0 0 4px;
+  cursor: pointer;
+}
+
+.check-row input { width: auto; }
+
+.modal textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.modal textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 6px 0 12px;
+  word-break: break-all;
+}
+
+.image-row { display: flex; gap: 8px; }
+.image-row input { flex: 1; }
+
+.image-preview { margin-top: 8px; }
+.image-preview img {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* 标签页 */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+
+.tab {
+  border: none;
+  background: transparent;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.tab-panel { padding: 4px 0; }
+
+.filing-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.filing-item input {
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.filing-item input.f-name { width: 90px; }
+.filing-item input.f-text { flex: 1; }
+.filing-item input.f-url { width: 40%; }
+
+/* 设置面板列表 */
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.list-item .thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--accent);
+  background: #eef1fb;
+  overflow: hidden;
+  font-size: 18px;
+}
+
+.list-item .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.list-item .thumb.folder { background: #fef3c7; }
+
+.list-item .info {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-item .info .title {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-item .info .meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-item .actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.list-item .actions .btn { padding: 5px 10px; font-size: 13px; }
+
+.list-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 20px 0;
+}
+
+/* 目录内容弹窗 */
+.folder-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.folder-head h2 { margin: 0; font-size: 18px; }
+
+.folder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 18px;
+  padding: 8px 4px;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+
+.hidden { display: none !important; }
+
+/* 移动端 */
+@media (max-width: 768px) {
+  body { padding: 40px 16px 24px; }
+
+  .header h1 { font-size: 2rem; }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    column-gap: 20px;
+    row-gap: 28px;
+    padding: 0 8px;
+  }
+
+  .dial-item { width: 90px; gap: 10px; }
+  .dial-icon { width: 90px; height: 90px; font-size: 2rem; border-radius: 18px; }
+  .dial-name { font-size: 0.9rem; max-width: 90px; }
+}

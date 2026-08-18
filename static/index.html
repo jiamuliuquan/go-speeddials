@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">快速拨号</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="toolbar">
+      <div class="dropdown hidden" id="new-dropdown">
+        <button class="btn btn-primary" id="btn-new" type="button">+ 新建 ▾</button>
+        <div class="dropdown-menu hidden" id="new-menu">
+          <button type="button" data-new="dial">新建拨号</button>
+          <button type="button" data-new="group">新建目录</button>
+        </div>
+      </div>
+      <button class="btn btn-ghost hidden" id="btn-login">登录</button>
+      <button class="btn btn-ghost hidden" id="btn-settings">设置</button>
+      <button class="btn btn-ghost hidden" id="btn-logout">退出登录</button>
+    </div>
+
+    <header class="header">
+      <h1 id="site-title">快速拨号</h1>
+      <p class="subtitle" id="site-subtitle"></p>
+    </header>
+
+    <main class="grid" id="grid"></main>
+
+    <footer class="footer" id="footer"></footer>
+  </div>
+
+  <!-- 登录弹窗 -->
+  <div class="modal-mask hidden" id="login-modal">
+    <div class="modal modal-sm">
+      <h2>登录</h2>
+      <form id="login-form">
+        <label>用户名</label>
+        <input type="text" id="login-username" autocomplete="username" value="admin" required />
+        <label>密码</label>
+        <input type="password" id="login-password" autocomplete="current-password" required />
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="btn-login-cancel">取消</button>
+          <button type="submit" class="btn btn-primary">登录</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div class="modal-mask hidden" id="settings-modal">
+    <div class="modal modal-lg">
+      <h2>设置</h2>
+      <div class="tabs">
+        <button type="button" class="tab active" data-tab="basic">基本</button>
+        <button type="button" class="tab" data-tab="footer">页脚备案</button>
+      </div>
+
+      <div class="tab-panel" id="tab-basic">
+        <label>站点标题</label>
+        <input type="text" id="setting-site-title" />
+        <label>副标题 / 格言（可留空）</label>
+        <input type="text" id="setting-site-subtitle" placeholder="例如：我恒有三宝，持而保之。" />
+        <label>每行显示个数</label>
+        <input type="number" id="setting-columns" min="1" max="12" />
+        <label>页面背景</label>
+        <label class="check-row">
+          <input type="checkbox" id="setting-daily-image" />
+          <span>显示每日一图（必应每日壁纸）</span>
+        </label>
+        <button class="btn btn-primary" id="btn-save-settings">保存基本设置</button>
+      </div>
+
+      <div class="tab-panel hidden" id="tab-footer">
+        <label>页脚 HTML 代码（备案信息等，支持多行）</label>
+        <textarea id="setting-footer-html" rows="8" spellcheck="false"></textarea>
+        <div class="hint">示例：&lt;a href="https://beian.miit.gov.cn" target="_blank"&gt;京ICP备12345678号&lt;/a&gt;</div>
+        <button class="btn btn-primary" id="btn-save-footer">保存页脚</button>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="btn-settings-close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 目录内容弹窗 -->
+  <div class="modal-mask hidden" id="folder-modal">
+    <div class="modal modal-lg">
+      <div class="folder-head">
+        <h2 id="folder-title">目录</h2>
+        <button class="btn btn-primary hidden" id="btn-folder-add">+ 新建拨号</button>
+      </div>
+      <div class="folder-grid" id="folder-dials"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="btn-folder-close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 拨号项编辑弹窗 -->
+  <div class="modal-mask hidden" id="dial-modal">
+    <div class="modal">
+      <h2 id="dial-modal-title">新增拨号项</h2>
+      <form id="dial-form">
+        <input type="hidden" id="dial-id" />
+        <label>标题</label>
+        <input type="text" id="dial-title" placeholder="例如：GitHub" required />
+        <label>链接</label>
+        <input type="text" id="dial-url" placeholder="例如：https://github.com" required />
+        <label>图标 / 图片</label>
+        <div class="image-row">
+          <input type="text" id="dial-image" placeholder="图片 URL 或上传图片" />
+          <button type="button" class="btn" id="btn-upload">上传</button>
+          <input type="file" id="file-input" accept="image/*" hidden />
+        </div>
+        <div class="image-preview" id="image-preview"></div>
+        <label>所属目录</label>
+        <select id="dial-group"></select>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="btn-cancel">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 目录编辑弹窗 -->
+  <div class="modal-mask hidden" id="group-modal">
+    <div class="modal">
+      <h2 id="group-modal-title">新增目录</h2>
+      <form id="group-form">
+        <input type="hidden" id="group-id" />
+        <label>目录名</label>
+        <input type="text" id="group-name" placeholder="例如：开发工具" required />
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="btn-group-cancel">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
