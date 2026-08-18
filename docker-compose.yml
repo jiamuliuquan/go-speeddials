@@ -1,0 +1,16 @@
+services:
+  speeddials:
+    image: ghcr.io/jiamuliuquan/go-speeddials:latest
+    container_name: speeddials
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMIN_USER=admin
+      - ADMIN_PASSWORD=123456
+      - TZ=Asia/Shanghai
+    volumes:
+      - speeddials-data:/app/data
+
+volumes:
+  speeddials-data:
