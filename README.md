@@ -58,3 +58,10 @@ docker compose up -d --force-recreate   # 更新后重建
 ```
 
 数据保存在 `speeddials-data` 卷中，删除容器不会丢失配置。首次启动后访问 `http://localhost:8080`，右上角登录即可管理。
+
+如需把数据挂载到宿主机目录，改用 bind mount 即可（容器以 root 运行，读写目录无需额外配置）：
+
+```yaml
+volumes:
+  - ./data:/app/data
+```

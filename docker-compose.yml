@@ -11,6 +11,8 @@ services:
       - TZ=Asia/Shanghai
     volumes:
       - speeddials-data:/app/data
+      # 如需挂载宿主目录，取消下面这行注释（容器以 root 运行，读写权限无需额外配置）
+      # - ./data:/app/data
 
 volumes:
   speeddials-data:

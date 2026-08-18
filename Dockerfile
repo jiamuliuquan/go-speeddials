@@ -12,8 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o speeddials .
 # 运行阶段
 FROM alpine:3.20
 
-RUN apk add --no-cache ca-certificates tzdata && \
-    addgroup -S app && adduser -S app -G app
+RUN apk add --no-cache ca-certificates tzdata
 
 WORKDIR /app
 
@@ -23,9 +22,7 @@ ENV ADDR=:8080 \
     DATA_DIR=/app/data \
     TZ=Asia/Shanghai
 
-RUN mkdir -p /app/data/uploads && chown -R app:app /app/data
-
-USER app
+RUN mkdir -p /app/data/uploads
 
 EXPOSE 8080
 
